@@ -41,7 +41,7 @@ try:
         elif opcion == "6":
             op.update_emp()
         elif opcion == "7":
-            op.noEmp_depto()
+            op.noEmp_depto(cursor)
         elif opcion == "8":
             break
         else:

@@ -48,6 +48,12 @@ def update_emp(cursor):
     cursor.callproc("Update_Emp",params)
 
 def noEmp_depto(cursor): #checar esta parte porque es una función no un proceso
-    depto_no = input('Ingrese el número del departamento')
-    params = (depto_no)
-    cursor.callproc("NoEmp_Depto",params)
+    depto_no = input('Ingrese el número del departamento:')
+    params = [depto_no]
+    result = cursor.callfunc("NoEmp_Depto",int,params)
+    if result > 0:
+        print('*****El departamento si tiene empleados asignados ' + ' Cantidad:'+ str(result) + '******')
+    else:
+        print('****El departamento no tiene empleados asignados****')
+    
+    
