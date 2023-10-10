@@ -31,15 +31,15 @@ try:
         if opcion == "1":
             op.add_depto(cursor)
         elif opcion == "2":
-            op.update_depto()
+            op.update_depto(cursor)
         elif opcion == "3":
-            op.delete_depto()
+            op.delete_depto(cursor)
         elif opcion == "4":
-            op.add_emp()
+            op.add_emp(cursor)
         elif opcion == "5":
-            op.delete_emp()
+            op.delete_emp(cursor)
         elif opcion == "6":
-            op.update_emp()
+            op.update_emp(cursor)
         elif opcion == "7":
             op.noEmp_depto(cursor)
         elif opcion == "8":
