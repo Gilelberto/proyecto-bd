@@ -1,5 +1,4 @@
---add depto
-CREATE OR REPLACE PROCEDURE Add_Depto(
+create or replace PROCEDURE Add_Depto(
     p_department_number IN NUMBER,
     p_department_name IN VARCHAR2,
     p_location IN VARCHAR2
@@ -31,10 +30,9 @@ EXCEPTION
     WHEN OTHERS then
         raise_application_error(-20026,'Error: Error desconocido');
 END Add_Depto;
-/
 
---update depto
-CREATE OR REPLACE PROCEDURE Update_Depto(
+
+create or replace PROCEDURE Update_Depto(
     p_department_id IN NUMBER,
     p_name IN VARCHAR2,
     p_location IN VARCHAR2
@@ -67,15 +65,16 @@ EXCEPTION
         raise_application_error(-20026,'Error: Error desconocido');
 
 END Update_Depto;
-/
+
 
 
 
 -- delete_depto
-CREATE OR REPLACE PROCEDURE Delete_Depto(
+create or replace PROCEDURE Delete_Depto(
     p_department_id IN NUMBER
 ) AS
     error_depto EXCEPTION;
+    error_foreign_key EXCEPTION;
     aux NUMBER;
 BEGIN
 
@@ -89,15 +88,15 @@ BEGIN
 EXCEPTION
     WHEN error_depto THEN 
         raise_application_error(-20300,'Error: Departamento Inexistente');
+    WHEN error_foreign_key THEN
+        raise_application_error(-20301, 'Error: El departamento tiene registros relacionados en otras tablas. No se puede eliminar.');
     WHEN OTHERS then
         raise_application_error(-20026,'Error: Error desconocido');
 
 END Delete_Depto;
-/
 
-
--- add employee
-CREATE OR REPLACE PROCEDURE Add_Emp(
+--add_emp
+create or replace PROCEDURE Add_Emp(
     emp_id NUMBER,
     emp_name VARCHAR2,
     emp_job VARCHAR2,
@@ -122,7 +121,7 @@ BEGIN
     IF emp_name IS NULL OR emp_job IS NULL OR emp_hiredate IS NULL OR emp_salary IS NULL OR emp_deptno IS NULL THEN
         raise null_exception; 
     END IF;
- 
+
     INSERT INTO emp (empno,ename,emp.job,mgr,hiredate,sal,comm,deptno)
     VALUES (emp_id,emp_name,emp_job,emp_manager,emp_hiredate,emp_salary,emp_commision,emp_deptno);
     COMMIT;
@@ -136,10 +135,11 @@ BEGIN
         raise_application_error(-20026,'Error: Error desconocido');
 
 END Add_Emp;
-/
+
+
 
 -- delete employee
-CREATE OR REPLACE PROCEDURE Delete_Emp(
+create or replace PROCEDURE Delete_Emp(
     p_employee_id IN NUMBER
 ) AS
     error_depto EXCEPTION;
@@ -163,10 +163,10 @@ EXCEPTION
 
 
 END Delete_Emp;
-/
+
 
 --update emp
-CREATE OR REPLACE PROCEDURE Update_Emp(
+create or replace PROCEDURE Update_Emp(
         emp_id NUMBER,
         emp_name VARCHAR2,
         emp_job VARCHAR2,
@@ -204,44 +204,40 @@ EXCEPTION
         raise_application_error(-20026,'Error: Error desconocido');
 
 END Update_Emp;
-/
+
 
 --noEmp_depto
-CREATE OR REPLACE FUNCTION NoEmp_Depto(
+create or replace FUNCTION NoEmp_Depto(
     p_department_id IN NUMBER
 ) RETURN NUMBER 
 AS
     error_depto EXCEPTION;
+    error_no_emp_dept EXCEPTION;
+
     v_count NUMBER;
 BEGIN
+
+    SELECT COUNT(*) INTO v_count FROM dept WHERE deptno = p_department_id;
+    IF v_count = 0 then
+        raise error_depto;
+    end if;
+
     SELECT COUNT(*) INTO v_count FROM emp WHERE deptno = p_department_id;
 
     IF v_count = 0 then
-        raise error_depto;
+        raise error_no_emp_dept;
     end if;
     RETURN v_count;
 
 EXCEPTION
     WHEN error_depto THEN 
         raise_application_error(-20300,'Error: Departamento Inexistente');
+    WHEN error_no_emp_dept THEN
+        raise_application_error(-20400,'Error: El departamento no tiene ningun empleado asociado');
     WHEN OTHERS then
         raise_application_error(-20026,'Error: Error desconocido');
 
 
 END NoEmp_Depto;
-/
 
 
-
-
-
-declare
-begin
-    --Add_Emp(7777,'Gru','villian',7839,sysdate,1000,null,20);
-    --Delete_Emp(7777);
-    --Update_Emp(7777,'Gru','villian',7839,null,1000,null,20); 
-    dbms_output.put_line(NoEmp_Depto(10));
-end;
-/
-
-set serveroutput on;

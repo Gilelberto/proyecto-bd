@@ -31,122 +31,101 @@ def add_depto(cursor, depto_no, depto_name, location):
 
 
 
-
-
-
-def update_depto(cursor):
+def update_depto(cursor,depto_no,depto_name,location):
     try:
-        depto_no = input('Ingrese el número de departamento: ')
-        depto_name = input('Ingrese el nombre del departamento: ')
-        location = input('Ingrese la ubicación del departamento: ')
         params = (depto_no,depto_name,location)
+
         cursor.callproc("Update_Depto",params)
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20300:
-            print("Error: Departamento inexistente")
+            raise ValueError("Error: Departamento inexistente")
         elif error.code == 20201:
-            print("Error: Valores nulos no permitidos.")
+            raise ValueError("Error: Valores nulos no permitidos.")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
+            raise ValueError("Error: Error desconocido.")
         else:
-            print("Error de base de datos:", e)
+            raise ValueError("Error de base de datos:", e)
     
 
-def delete_depto(cursor):
+def delete_depto(cursor,depto_no):
     try:
-        depto_no = input('Ingrese el número de departamento: ')
         params = (depto_no,)
         cursor.callproc("Delete_Depto",params)
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20300:
-            print("Error: Departamento inexistente")
+            raise ValueError("Error: Departamento inexistente")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
+            raise ValueError("Error: Error desconocido.")
         else:
-            print("Error de base de datos:", e)
+            raise ValueError("Error de base de datos:", e)
 
 
-def add_emp(cursor):
+def add_emp(cursor,emp_id,emp_name,emp_job,emp_manager,emp_hiredate,emp_salary,emp_commision,emp_deptno):
     try:
-        emp_id = input('Ingrese el id del empleado a agregar: ')#puede ser autoincremental
-        emp_name = input('Ingrese el nombre del empleado: ')
-        emp_job = input('Ingrese el puesto del empleado: ')
-        emp_manager = input('Ingrese el id del manager: ') 
-        emp_hiredate = input('Ingrese la fecha de contratación: ') #mejor manejarlo en una función
-        emp_salary = input('Ingrese el salario del empleado: ')
-        emp_commision = input('Ingrese la comisión del empleado (pulse enter si no tiene): ')
-        emp_deptno = input('Ingrese el departamento al cual pertenece el empleado: ')
         params = (emp_id,emp_name,emp_job,emp_manager,emp_hiredate,emp_salary,emp_commision,emp_deptno)
         cursor.callproc("Add_Emp",params)
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20200:
-            print("Error: Id repetido.")
+            raise ValueError("Error: Id repetido.")
         elif error.code == 20201:
-            print("Error: Valores nulos no permitidos.")
+            raise ValueError("Error: Valores nulos no permitidos.")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
+            raise ValueError("Error: Error desconocido.")
         else:
-            print("Error de base de datos:", e)
+            raise ValueError("Error de base de datos:", e)
 
-def delete_emp(cursor):
+def delete_emp(cursor,empno):
     try:
-        empno = input('Ingrese el id del empleado: ')
         params = (empno,)
         cursor.callproc("Delete_Emp",params)
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20300:
-            print("Error: Empleado inexistente")
+            raise ValueError("Error: Empleado inexistente")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
+            raise ValueError("Error: Error desconocido.")
         else:
-            print("Error de base de datos:", e)
+            raise ValueError("Error de base de datos:", e)
     
 
-def update_emp(cursor):
+def update_emp(cursor,emp_id,emp_name,emp_job,emp_manager,emp_hiredate,emp_salary,emp_commision,emp_deptno):
     try:
-        emp_id = input('Ingrese el id del empleado a agregar: ') #puede ser autoincremental
-        emp_name = input('Ingrese el nombre del empleado: ')
-        emp_job = input('Ingrese el puesto del empleado: ')
-        emp_manager = input('Ingrese el id del manager: ') 
-        emp_hiredate = input('Ingrese la fecha de contratación: ') #mejor manejarlo en una función
-        emp_salary = input('Ingrese el salario del empleado: ')
-        emp_commision = input('Ingrese la comisión del empleado (pulse enter si no tiene): ')
-        emp_deptno = input('Ingrese el departamento al cual pertenece el empleado: ')
         params = (emp_id,emp_name,emp_job,emp_manager,emp_hiredate,emp_salary,emp_commision,emp_deptno)
         cursor.callproc("Update_Emp",params)
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20300:
-            print("Error: Empleado inexistente")
+            raise ValueError("Error: Empleado inexistente")
         elif error.code == 20201:
-            print("Error: Valores nulos no permitidos.")
+            raise ValueError("Error: Valores nulos no permitidos.")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
+            raise ValueError("Error: Error desconocido.")
         else:
-            print("Error de base de datos:", e)
+            raise ValueError("Error de base de datos:", e)
     
     
 
-def noEmp_depto(cursor): 
+def noEmp_depto(cursor,depto_no): 
     try:
-        depto_no = input('Ingrese el número del departamento:')
         params = [depto_no]
         result = cursor.callfunc("NoEmp_Depto",int,params)
         if result > 0:
-            print('*****El departamento si tiene empleados asignados ' + ' Cantidad:'+ str(result) + '******')
+            return '*****El departamento si tiene empleados asignados ' + ' Cantidad:'+ str(result) + '******'
         else:
-            print('****El departamento no tiene empleados asignados****')
+            return '****El departamento no tiene empleados asignados****'
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20300:
-            print("Error: Departamento inexistente")
+            raise ValueError("Error: Departamento inexistente")
+        elif error.code == 20400:
+            raise ValueError("Error: El departamento no tiene ningun empleado asociado")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
-    
+            raise ValueError("Error: Error desconocido.")
+        else:
+            raise ValueError("Error de base de datos:", e)
     
 
     
