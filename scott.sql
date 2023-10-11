@@ -88,7 +88,7 @@ BEGIN
     COMMIT;
 EXCEPTION
     WHEN error_depto THEN 
-        raise_application_error(-20300,'Error: Empleado Inexistente');
+        raise_application_error(-20300,'Error: Departamento Inexistente');
     WHEN OTHERS then
         raise_application_error(-20026,'Error: Error desconocido');
 

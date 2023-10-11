@@ -1,23 +1,38 @@
 import oracledb
 
-def add_depto(cursor):
-    try: 
-        depto_no = input('Ingrese el número de departamento: ')
-        depto_name = input('Ingrese el nombre del departamento: ')
-        location = input('Ingrese la ubicación del departamento; ')
-        params = (depto_no,depto_name,location)
-        cursor.callproc("Add_depto",params)
+# def add_depto(cursor, depto_no, depto_name, location):
+#     try: 
+#         params = (depto_no, depto_name, location)
+#         cursor.callproc("Add_Depto", params)
+#     except oracledb.DatabaseError as e:
+#         error, = e.args
+#         if error.code == 20200:
+#             print("Error: Id repetido.")
+#         elif error.code == 20201:
+#             print("Error: Valores nulos no permitidos.")
+#         elif error.code == 20026:
+#             print("Error: Error desconocido.")
+#         else:
+#             print("Error de base de datos:", e)
+
+
+def add_depto(cursor, depto_no, depto_name, location):
+    try:
+        params = (depto_no, depto_name, location)
+        cursor.callproc("Add_Depto", params)
     except oracledb.DatabaseError as e:
         error, = e.args
         if error.code == 20200:
-            print("Error: Id repetido.")
+            raise ValueError("Error: Id repetido.")
         elif error.code == 20201:
-            print("Error: Valores nulos no permitidos.")
+            raise ValueError("Error: Valores nulos no permitidos.")
         elif error.code == 20026:
-            print("Error: Error desconocido.")
-        else:
-            print("Error de base de datos:", e)
-    
+            raise ValueError("Error: Error desconocido.")
+
+
+
+
+
 
 def update_depto(cursor):
     try:
