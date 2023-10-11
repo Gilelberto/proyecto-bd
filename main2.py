@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import oracledb
 import operations as op
 
@@ -422,7 +423,58 @@ def noEmp_department():
 
 
 #######################################################################################################
+#funcion para mostrar la tabla de empleados
+def mostrar_tabla_emp():
+    connection = connect_to_oracle()
+    if connection:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM emp") 
+        column_names = [desc[0] for desc in cursor.description]
 
+        # Crear una ventana emergente para mostrar la tabla
+        tabla_window = tk.Toplevel(root)
+        tabla_window.title("Tabla de Datos")
+
+
+        tree = ttk.Treeview(tabla_window, columns=column_names, show="headings")
+
+        for col in column_names:
+            tree.heading(col, text=col)
+            tree.column(col, width=100)
+
+        for row in cursor:
+            tree.insert("", "end", values=row)
+
+        tree.pack()
+
+########################################################################################################
+
+#funcion para mostrar la tabla de departamentos
+def mostrar_tabla_dept():
+    connection = connect_to_oracle()
+    if connection:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM dept")  
+        column_names = [desc[0] for desc in cursor.description]
+
+        # Crear una ventana emergente para mostrar la tabla
+        tabla_window = tk.Toplevel(root)
+        tabla_window.title("Tabla de Datos")
+
+
+        tree = ttk.Treeview(tabla_window, columns=column_names, show="headings")
+
+        for col in column_names:
+            tree.heading(col, text=col)
+            tree.column(col, width=100)
+
+        for row in cursor:
+            tree.insert("", "end", values=row)
+
+        tree.pack()
+
+
+##########################################################################################################
 # Función para salir de la aplicación
 def salir():
     root.destroy()
@@ -449,6 +501,10 @@ delete_employee_button = tk.Button(root, text="Eliminar Empleado", command=delet
 update_employee_button = tk.Button(root, text="Actualizar Empleado", command=update_employee)
 # Botón para Verificar si un departamento no tiene empleados
 noEmp_department_button = tk.Button(root, text="Verificar si un departamento no tiene empleados", command=noEmp_department)
+#Boton mostrar tabla Empleados 
+mostrar_tabla_emp_button = tk.Button(root, text="Consultar Tabla Empleados", command=mostrar_tabla_emp)
+#Boton mostrar tabla Departamentos 
+mostrar_tabla_dept_button = tk.Button(root, text="Consultar Tabla Departamentos", command=mostrar_tabla_dept)
 # Botón para salir
 salir_button = tk.Button(root, text="Salir", command=salir)
 
@@ -463,7 +519,11 @@ add_employee_button.pack()
 delete_employee_button.pack()
 update_employee_button.pack()
 noEmp_department_button.pack()
+mostrar_tabla_emp_button.pack()
+mostrar_tabla_dept_button.pack()
 salir_button.pack()
+
+
 
 
 
